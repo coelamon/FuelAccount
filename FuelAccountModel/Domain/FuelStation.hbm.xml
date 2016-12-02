@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="FuelAccountModel" namespace="FuelAccountModel.Domain" schema="my_car" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="FuelStation" table="fuel_station" lazy="true" >
+    <id name="FuelStationId" column="fuel_station_id" >
+      <generator class="native">
+        <param name="sequence">fuel_station_id_seq</param>
+      </generator>
+    </id>
+    <property name="Name">
+      <column name="name" sql-type="character varying" not-null="true" />
+    </property>
+    <property name="Address">
+      <column name="address" sql-type="character varying" not-null="true" />
+    </property>
+  </class>
+</hibernate-mapping>

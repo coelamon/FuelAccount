@@ -1,0 +1,2 @@
+﻿Были проблемы с типом БД "time without time zone"
+пришлось создать тип TimeType реализующий интерфейс IUserType

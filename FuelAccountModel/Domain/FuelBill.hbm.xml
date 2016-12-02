@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<hibernate-mapping assembly="FuelAccountModel" namespace="FuelAccountModel.Domain" schema="my_car" xmlns="urn:nhibernate-mapping-2.2">
+  <class name="FuelBill" table="fuel_bill" lazy="true" >
+    <id name="FuelBillId" column="fuel_bill_id" >
+      <generator class="native">
+        <param name="sequence">fuel_bill_id_seq</param>
+      </generator>
+    </id>
+    <property name="Payment">
+      <column name="payment" sql-type="numeric" not-null="false" />
+    </property>
+    <property name="FuelStationId" insert="false" update="false">
+      <column name="fuel_station_id" sql-type="integer" not-null="false" />
+    </property>
+    <property name="BillDate">
+      <column name="bill_date" sql-type="date" not-null="true" />
+    </property>
+    <property name="FuelPrice">
+      <column name="fuel_price" sql-type="real" not-null="true" />
+    </property>
+    <property name="FuelId" insert="false" update="false">
+      <column name="fuel_id" sql-type="integer" not-null="true" />
+    </property>
+    <property name="BillTime" not-null="false" type="FuelAccountModel.UserTypes.TimeType, FuelAccountModel">
+      <column name="bill_time" sql-type="time without time zone" not-null="false" />
+    </property>
+    <property name="Discount">
+      <column name="discount" sql-type="real" not-null="false" />
+    </property>
+    <property name="Litres">
+      <column name="litres" sql-type="real" not-null="true" />
+    </property>
+    <property name="Kilometrage">
+      <column name="kilometrage" sql-type="real" not-null="false" />
+    </property>
+    <many-to-one name="Fuel" class="Fuel" column="fuel_id" not-null="true" />
+    <many-to-one name="FuelStation" class="FuelStation" column="fuel_station_id" not-null="false" />
+  </class>
+</hibernate-mapping>
