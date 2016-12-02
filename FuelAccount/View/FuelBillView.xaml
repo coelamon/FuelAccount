@@ -16,26 +16,43 @@
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
-        <Label x:Name="label" Content="Date" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label1" Content="Time" HorizontalAlignment="Left" Margin="10,43,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label2" Content="Fuel" HorizontalAlignment="Left" Margin="10,70,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label3" Content="FuelStation" HorizontalAlignment="Left" Margin="10,101,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label4" Content="Price" HorizontalAlignment="Left" Margin="10,130,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label5" Content="Litres" HorizontalAlignment="Left" Margin="10,158,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label7" Content="Discount" HorizontalAlignment="Left" Margin="10,186,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label8" Content="Payment" HorizontalAlignment="Left" Margin="10,212,0,0" VerticalAlignment="Top"/>
-        <Label x:Name="label6" Content="Kilometrage" HorizontalAlignment="Left" Margin="10,242,0,0" VerticalAlignment="Top"/>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Label Grid.Row="0" x:Name="label" Content="Date" VerticalAlignment="Top"/>
+        <Label Grid.Row="1" x:Name="label1" Content="Time" VerticalAlignment="Top"/>
+        <Label Grid.Row="2" x:Name="label2" Content="Fuel" VerticalAlignment="Top"/>
+        <Label Grid.Row="3" x:Name="label3" Content="FuelStation" VerticalAlignment="Top"/>
+        <Label Grid.Row="4" x:Name="label4" Content="Price" VerticalAlignment="Top"/>
+        <Label Grid.Row="5" x:Name="label5" Content="Litres" VerticalAlignment="Top"/>
+        <Label Grid.Row="6" x:Name="label7" Content="Discount" VerticalAlignment="Top"/>
+        <Label Grid.Row="7" x:Name="label8" Content="Payment" VerticalAlignment="Top"/>
+        <Label Grid.Row="8" x:Name="label6" Content="Kilometrage" VerticalAlignment="Top"/>
 
-        <DatePicker Margin="170,10,10,0" VerticalAlignment="Top" SelectedDate="{Binding Path=BillDate}"/>
-        <ctl:TimePicker Margin="167,39,10,0" VerticalAlignment="Top" Height="21" SelectedTime="{Binding Path=BillTime, Mode=TwoWay}"/>
-        <ComboBox x:Name="comboBox" Margin="170,74,10,0" VerticalAlignment="Top" ItemsSource="{Binding Path=Fuels}" SelectedItem="{Binding Path=Fuel}"/>
-        <ComboBox x:Name="comboBox1" Margin="170,101,10,0" VerticalAlignment="Top" ItemsSource="{Binding Path=FuelStations}" SelectedItem="{Binding Path=FuelStation}"/>
-        <TextBox x:Name="textBox" Height="23" Margin="170,130,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=FuelPrice}"/>
-        <TextBox x:Name="textBox1" Height="23" Margin="170,158,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=Litres}"/>
-        <TextBox x:Name="textBox3" Height="23" Margin="170,186,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=Discount}"/>
-        <TextBox x:Name="textBox4" Height="23" Margin="170,214,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=Payment}"/>
-        <TextBox x:Name="textBox2" Height="23" Margin="170,242,10,0" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=Kilometrage}"/>
+        <DatePicker Grid.Row="0" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Left" SelectedDate="{Binding Path=BillDate}"/>
+        <ctl:TimePicker Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Top" SelectedTime="{Binding Path=BillTime, Mode=TwoWay}"/>
+        <ComboBox Grid.Row="2" Grid.Column="1" x:Name="comboBox" ItemsSource="{Binding Path=Fuels}" VerticalAlignment="Top" SelectedItem="{Binding Path=Fuel}"/>
+        <ComboBox Grid.Row="3" Grid.Column="1" x:Name="comboBox1" ItemsSource="{Binding Path=FuelStations}" VerticalAlignment="Top" SelectedItem="{Binding Path=FuelStation}"/>
+        <TextBox Grid.Row="4" Grid.Column="1" x:Name="textBox" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=FuelPrice}"/>
+        <TextBox Grid.Row="5" Grid.Column="1" x:Name="textBox1" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=Litres}"/>
+        <TextBox Grid.Row="6" Grid.Column="1" x:Name="textBox3" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=Discount}"/>
+        <TextBox Grid.Row="7" Grid.Column="1" x:Name="textBox4" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=Payment}"/>
+        <TextBox Grid.Row="8" Grid.Column="1" x:Name="textBox2" TextWrapping="Wrap" VerticalAlignment="Top" Text="{Binding Path=Kilometrage}"/>
 
-        <Button x:Name="button" Content="Save" Margin="0,0,10,10" Height="22" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Command="{Binding Path=SaveCommand}"/>
+        <Button Grid.Row="10" Grid.Column="1" x:Name="button" Content="Save" Margin="0,0,0,0" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="100" Command="{Binding Path=SaveCommand}"/>
     </Grid>
 </UserControl>
