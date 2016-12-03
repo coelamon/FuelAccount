@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:FuelAccount.View"
         xmlns:vm="clr-namespace:FuelAccount.ViewModel"
         mc:Ignorable="d"
-        Title="MainView" Height="350" Width="525" DataContext="{Binding Path=Main, Source={StaticResource Locator}}">
+        Title="Fuel Account" Height="350" Width="525" DataContext="{Binding Path=Main, Source={StaticResource Locator}}">
     <Window.Resources>
         <DataTemplate DataType="{x:Type vm:FuelBillViewModel}">
             <local:FuelBillView/>
@@ -14,6 +14,7 @@
         <DataTemplate DataType="{x:Type vm:AllFuelBillsViewModel}">
             <local:AllFuelBillsView/>
         </DataTemplate>
+        <BitmapImage x:Key="CloseIcon" UriSource="../Resources/close-icon.png"/>
     </Window.Resources>
     <Grid>
         <Grid.ColumnDefinitions>
@@ -21,13 +22,23 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
         <Grid>
-            <Button Margin="10,10,10,10" Height="30" VerticalAlignment="Top" Content="New Fuel Bill" Command="{Binding Path=NewFuelBillCommand}"/>
+            <Button Content="All Fuel Bills" Height="30" Margin="10,10,10,10" VerticalAlignment="Top" Command="{Binding Path=ShowAllFuelBillsCommand}"/>
+            <Button Content="New Fuel Bill" Height="30"  Margin="10,45,10,10" VerticalAlignment="Top" Command="{Binding Path=NewFuelBillCommand}"/>
         </Grid>
         <TabControl Grid.Column="1" ItemsSource="{Binding Path=Workspaces}">
             <TabControl.ItemTemplate>
                 <DataTemplate>
                     <Grid>
-                        <TextBlock Text="{Binding Path=DisplayName}"></TextBlock>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="{Binding Path=DisplayName}" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                        <TextBlock Grid.Column="1">
+                            <Hyperlink Command="{Binding CloseCommand}" TextDecorations="{x:Null}">
+                                <Image Source="{StaticResource CloseIcon}" Width="16" Height="16"/>
+                            </Hyperlink>
+                        </TextBlock>
                     </Grid>
                 </DataTemplate>
             </TabControl.ItemTemplate>

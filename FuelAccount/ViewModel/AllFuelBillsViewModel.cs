@@ -1,4 +1,5 @@
-﻿using FuelAccount.Util;
+﻿using FuelAccount.Repository;
+using FuelAccount.Util;
 using FuelAccountModel.Domain;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -13,7 +14,7 @@ using System.Windows.Input;
 
 namespace FuelAccount.ViewModel
 {
-    class AllFuelBillsViewModel : ViewModelBase
+    class AllFuelBillsViewModel : WorkspaceViewModel
     {
         ObservableCollection<FuelBillViewModel> _fuelBills;
         ReadOnlyObservableCollection<FuelBillViewModel> _fuelBillsReadOnly;
@@ -32,7 +33,7 @@ namespace FuelAccount.ViewModel
             }
         }
 
-        public string DisplayName
+        public override string DisplayName
         {
             get
             {
@@ -47,12 +48,9 @@ namespace FuelAccount.ViewModel
                 _fuelBills = new ObservableCollection<FuelBillViewModel>();
             }
             _fuelBills.Clear();
-            using (ISession session = NHibernateSessionFactory.OpenSession())
+            foreach (var bill in new FuelBillRepository().GetAll())
             {
-                foreach (var bill in session.QueryOver<FuelBill>().List())
-                {
-                    _fuelBills.Add(new FuelBillViewModel(bill));
-                }
+                _fuelBills.Add(new FuelBillViewModel(bill));
             }
         }
 

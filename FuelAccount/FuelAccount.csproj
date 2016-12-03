@@ -122,6 +122,7 @@
     <Compile Include="ViewModel\FuelViewModel.cs" />
     <Compile Include="ViewModel\MainViewModel.cs" />
     <Compile Include="ViewModel\ViewModelLocator.cs" />
+    <Compile Include="ViewModel\WorkspaceViewModel.cs" />
     <Compile Include="View\AllFuelBillsView.xaml.cs">
       <DependentUpon>AllFuelBillsView.xaml</DependentUpon>
     </Compile>

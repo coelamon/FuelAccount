@@ -3,6 +3,7 @@ using FuelAccountModel.Domain;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using NHibernate;
+using System;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
@@ -22,10 +23,10 @@ namespace FuelAccount.ViewModel
     /// </summary>
     public class MainViewModel : ViewModelBase
     {
-        private ObservableCollection<ViewModelBase> _workspaces;
+        private ObservableCollection<ViewModelBase> _workspaces = new ObservableCollection<ViewModelBase>();
         private ReadOnlyObservableCollection<ViewModelBase> _workspacesReadOnly;
-        private RelayCommand _testConnectionCommand;
         private RelayCommand _newFuelBillCommand;
+        private RelayCommand _showAllFuelBillsCommand;
 
         /// <summary>
         /// Initializes a new instance of the MainViewModel class.
@@ -40,8 +41,6 @@ namespace FuelAccount.ViewModel
             ////{
             ////    // Code runs "for real"
             ////}
-            _workspaces = new ObservableCollection<ViewModelBase>();
-            _workspaces.Add(new AllFuelBillsViewModel());
         }
 
         public ReadOnlyObservableCollection<ViewModelBase> Workspaces
@@ -54,6 +53,32 @@ namespace FuelAccount.ViewModel
                 }
                 return _workspacesReadOnly;
             }
+        }
+
+        public ICommand ShowAllFuelBillsCommand
+        {
+            get
+            {
+                if (_showAllFuelBillsCommand == null)
+                {
+                    _showAllFuelBillsCommand = new RelayCommand(() => this.ShowAllFuelBills());
+                }
+                return _showAllFuelBillsCommand;
+            }
+        }
+
+        private void ShowAllFuelBills()
+        {
+            foreach (var workspace in _workspaces)
+            {
+                if (workspace is AllFuelBillsViewModel)
+                {
+                    return;
+                }
+            }
+            AllFuelBillsViewModel allFuelBills = new AllFuelBillsViewModel();
+            allFuelBills.CloseRequested += new Action<WorkspaceViewModel>(OnWorkspaceCloseRequested);
+            _workspaces.Insert(0, allFuelBills);
         }
 
         public ICommand NewFuelBillCommand
@@ -70,29 +95,14 @@ namespace FuelAccount.ViewModel
 
         private void NewFuelBill()
         {
-            _workspaces.Add(new FuelBillViewModel());
+            FuelBillViewModel newFuelBill = new FuelBillViewModel();
+            newFuelBill.CloseRequested += new Action<WorkspaceViewModel>(OnWorkspaceCloseRequested);
+            _workspaces.Add(newFuelBill);
         }
 
-        public ICommand TestConnectionCommand
+        private void OnWorkspaceCloseRequested(WorkspaceViewModel workspace)
         {
-            get
-            {
-                if (_testConnectionCommand == null)
-                {
-                    _testConnectionCommand = new RelayCommand(() => TestConnection());
-                }
-                return _testConnectionCommand;
-            }
-        }
-
-        private void TestConnection()
-        {
-            using (ISession session = NHibernateSessionFactory.OpenSession())
-            {
-                Fuel fuel = session.Get<Fuel>(1);
-                FuelStation station = session.Get<FuelStation>(1);
-                FuelBill bill = session.Get<FuelBill>(1);
-            }
+            _workspaces.Remove(workspace);
         }
     }
 }

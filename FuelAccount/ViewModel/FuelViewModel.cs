@@ -12,6 +12,10 @@ namespace FuelAccount.ViewModel
     {
         public FuelViewModel(Fuel fuel)
         {
+            if (fuel == null)
+            {
+                throw new ArgumentException();
+            }
             this.FuelId = fuel.FuelId;
             this.Name = fuel.Name;
         }

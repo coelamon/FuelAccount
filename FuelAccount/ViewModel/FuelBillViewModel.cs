@@ -1,4 +1,5 @@
-﻿using FuelAccount.Util;
+﻿using FuelAccount.Repository;
+using FuelAccount.Util;
 using FuelAccountModel.Domain;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -13,9 +14,10 @@ using System.Windows.Input;
 
 namespace FuelAccount.ViewModel
 {
-    public class FuelBillViewModel : ViewModelBase
+    public class FuelBillViewModel : WorkspaceViewModel
     {
-        int? _id;
+        bool _isNewFuelBill;
+        FuelBill _fuelBill;
         ObservableCollection<FuelViewModel> _fuels;
         ReadOnlyObservableCollection<FuelViewModel> _fuelsReadOnly;
         ObservableCollection<FuelStationViewModel> _fuelStations;
@@ -35,14 +37,23 @@ namespace FuelAccount.ViewModel
 
         public FuelBillViewModel()
         {
-
+            _isNewFuelBill = true;
+            _fuelBill = new FuelBill();
         }
 
         public FuelBillViewModel(FuelBill bill)
         {
-            _id = bill.FuelBillId;
+            _isNewFuelBill = false;
+            _fuelBill = bill;
             this.Fuel = new FuelViewModel(bill.Fuel);
-            this.FuelStation = new FuelStationViewModel(bill.FuelStation);
+            if (bill.FuelStation != null)
+            {
+                this.FuelStation = new FuelStationViewModel(bill.FuelStation);
+            }
+            else
+            {
+                this.FuelStation = null;
+            }
             this.BillDate = bill.BillDate;
             if (bill.BillTime != null)
             {
@@ -59,11 +70,11 @@ namespace FuelAccount.ViewModel
             this.Kilometrage = bill.Kilometrage;
         }
 
-        public string DisplayName
+        public override string DisplayName
         {
             get
             {
-                if (_id == null)
+                if (_isNewFuelBill)
                 {
                     return "New Fuel Bill";
                 }
@@ -81,13 +92,9 @@ namespace FuelAccount.ViewModel
                 if (_fuelsReadOnly == null)
                 {
                     _fuels = new ObservableCollection<FuelViewModel>();
-                    using (ISession session = NHibernateSessionFactory.OpenSession())
+                    foreach (var fuel in new FuelRepository().GetAll())
                     {
-                        IList<Fuel> fuels = session.QueryOver<Fuel>().List();
-                        foreach (var fuel in fuels)
-                        {
-                            _fuels.Add(new FuelViewModel(fuel));
-                        }
+                        _fuels.Add(new FuelViewModel(fuel));
                     }
                     _fuelsReadOnly = new ReadOnlyObservableCollection<FuelViewModel>(_fuels);
                 }
@@ -102,13 +109,9 @@ namespace FuelAccount.ViewModel
                 if (_fuelStationsReadOnly == null)
                 {
                     _fuelStations = new ObservableCollection<FuelStationViewModel>();
-                    using (ISession session = NHibernateSessionFactory.OpenSession())
+                    foreach (var fuelStation in new FuelStationRepository().GetAll())
                     {
-                        IList<FuelStation> fuelStations = session.QueryOver<FuelStation>().List();
-                        foreach (var fuelStation in fuelStations)
-                        {
-                            _fuelStations.Add(new FuelStationViewModel(fuelStation));
-                        }
+                        _fuelStations.Add(new FuelStationViewModel(fuelStation));
                     }
                     _fuelStationsReadOnly = new ReadOnlyObservableCollection<FuelStationViewModel>(_fuelStations);
                 }
@@ -130,7 +133,7 @@ namespace FuelAccount.ViewModel
                 }
                 _fuel = value;
                 RaisePropertyChanged(() => Fuel);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -148,7 +151,7 @@ namespace FuelAccount.ViewModel
                 }
                 _fuelStation = value;
                 RaisePropertyChanged(() => FuelStation);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -166,7 +169,7 @@ namespace FuelAccount.ViewModel
                 }
                 _billDate = value;
                 RaisePropertyChanged(() => BillDate);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -184,7 +187,7 @@ namespace FuelAccount.ViewModel
                 }
                 _billTime = value;
                 RaisePropertyChanged(() => BillTime);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -202,7 +205,7 @@ namespace FuelAccount.ViewModel
                 }
                 _fuelPrice = value;
                 RaisePropertyChanged(() => FuelPrice);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -220,7 +223,7 @@ namespace FuelAccount.ViewModel
                 }
                 _litres = value;
                 RaisePropertyChanged(() => Litres);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -238,7 +241,7 @@ namespace FuelAccount.ViewModel
                 }
                 _discount = value;
                 RaisePropertyChanged(() => Discount);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -256,7 +259,7 @@ namespace FuelAccount.ViewModel
                 }
                 _payment = value;
                 RaisePropertyChanged(() => Payment);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -274,7 +277,7 @@ namespace FuelAccount.ViewModel
                 }
                 _kilometrage = value;
                 RaisePropertyChanged(() => Kilometrage);
-                SaveCommandRaiseCanExecuteChanged();
+                RaiseSaveCommandCanExecuteChanged();
             }
         }
 
@@ -294,47 +297,40 @@ namespace FuelAccount.ViewModel
         {
             if (this.CanSave)
             {
-                using (ISession session = NHibernateSessionFactory.OpenSession())
+                FuelBill bill = _fuelBill;
+                bill.BillDate = ((DateTime)this.BillDate).Date;
+                if (this.BillTime != null)
                 {
-                    using (ITransaction transaction = session.BeginTransaction())
-                    {
-                        FuelBill bill = null;
-                        if (_id == null)
-                        {
-                            bill = new FuelBill();
-                        }
-                        else
-                        {
-                            bill = session.Get<FuelBill>(_id);
-                        }
-                        bill.BillDate = ((DateTime)this.BillDate).Date;
-                        if (this.BillTime != null)
-                        {
-                            bill.BillTime = (TimeSpan)this.BillTime;
-                        }
-                        else
-                        {
-                            bill.BillTime = null;
-                        }
-                        bill.Fuel = session.Get<Fuel>(this.Fuel.FuelId);
-                        bill.FuelStation = session.Get<FuelStation>(this.FuelStation.FuelStationId);
-                        bill.FuelPrice = (float)this.FuelPrice;
-                        bill.Litres = (float)this.Litres;
-                        bill.Discount = this.Discount;
-                        bill.Payment = this.Payment;
-                        bill.Kilometrage = this.Kilometrage;
-                        if (_id == null)
-                        {
-                            session.Save(bill);
-                            _id = bill.FuelBillId;
-                        }
-                        else
-                        {
-                            session.Update(bill);
-                        }
-                        transaction.Commit();
-                    }
+                    bill.BillTime = (TimeSpan)this.BillTime;
                 }
+                else
+                {
+                    bill.BillTime = null;
+                }
+                bill.Fuel = new FuelRepository().Get(this.Fuel.FuelId);
+                if (this.FuelStation != null)
+                {
+                    bill.FuelStation = new FuelStationRepository().Get(this.FuelStation.FuelStationId);
+                }
+                else
+                {
+                    bill.FuelStation = null;
+                }
+                bill.FuelPrice = (float)this.FuelPrice;
+                bill.Litres = (float)this.Litres;
+                bill.Discount = this.Discount;
+                bill.Payment = this.Payment;
+                bill.Kilometrage = this.Kilometrage;
+                if (_isNewFuelBill)
+                {
+                    new FuelBillRepository().Add(bill);
+                    _isNewFuelBill = false;
+                }
+                else
+                {
+                    new FuelBillRepository().Update(bill);
+                }
+
                 RaisePropertyChanged(() => DisplayName);
             }
         }
@@ -351,10 +347,6 @@ namespace FuelAccount.ViewModel
                 {
                     return false;
                 }
-                if (this.FuelStation == null)
-                {
-                    return false;
-                }
                 if (this.FuelPrice == null)
                 {
                     return false;
@@ -366,8 +358,8 @@ namespace FuelAccount.ViewModel
                 return true;
             }
         }
-
-        private void SaveCommandRaiseCanExecuteChanged()
+        
+        private void RaiseSaveCommandCanExecuteChanged()
         {
             if (_saveCommand != null)
             {

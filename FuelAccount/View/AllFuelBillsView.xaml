@@ -8,7 +8,7 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
         <Button x:Name="button" Content="Reload" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Command="{Binding Path=ReloadCommand}"/>
-        <DataGrid x:Name="dataGrid" Margin="10,37,10,10" ItemsSource="{Binding Path=AllFuelBills}" AutoGenerateColumns="False">
+        <DataGrid x:Name="dataGrid" Margin="10,37,10,10" ItemsSource="{Binding Path=AllFuelBills}" AutoGenerateColumns="False" IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Binding="{Binding Path=BillDate, StringFormat={}{0:dd.MM.yyyy}}" Header="Date" />
                 <DataGridTextColumn Binding="{Binding Path=BillTime}" Header="Time" />
