@@ -107,6 +107,14 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Repository\FuelBillRepository.cs" />
+    <Compile Include="Repository\FuelRepository.cs" />
+    <Compile Include="Repository\FuelStationRepository.cs" />
+    <Compile Include="Repository\IFuelBillRepository.cs" />
+    <Compile Include="Repository\IFuelRepository.cs" />
+    <Compile Include="Repository\IFuelStationRepository.cs" />
+    <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\NHibernateRepository.cs" />
     <Compile Include="Util\NHibernateSessionFactory.cs" />
     <Compile Include="ViewModel\AllFuelBillsViewModel.cs" />
     <Compile Include="ViewModel\FuelBillViewModel.cs" />
