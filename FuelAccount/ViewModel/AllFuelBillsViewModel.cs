@@ -20,6 +20,20 @@ namespace FuelAccount.ViewModel
         ReadOnlyObservableCollection<FuelBillViewModel> _fuelBillsReadOnly;
         RelayCommand _reloadCommand;
 
+        IFuelBillRepository _fuelBillRepository;
+
+        private IFuelBillRepository FuelBillRepository
+        {
+            get
+            {
+                if (_fuelBillRepository == null)
+                {
+                    _fuelBillRepository = new FuelBillRepository();
+                }
+                return _fuelBillRepository;
+            }
+        }
+
         public ReadOnlyObservableCollection<FuelBillViewModel> AllFuelBills
         {
             get
@@ -48,7 +62,7 @@ namespace FuelAccount.ViewModel
                 _fuelBills = new ObservableCollection<FuelBillViewModel>();
             }
             _fuelBills.Clear();
-            foreach (var bill in new FuelBillRepository().GetAll())
+            foreach (var bill in this.FuelBillRepository.GetAll())
             {
                 _fuelBills.Add(new FuelBillViewModel(bill));
             }

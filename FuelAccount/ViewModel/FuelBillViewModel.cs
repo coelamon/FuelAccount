@@ -35,6 +35,10 @@ namespace FuelAccount.ViewModel
 
         RelayCommand _saveCommand;
 
+        IFuelRepository _fuelRepository;
+        IFuelBillRepository _fuelBillRepository;
+        IFuelStationRepository _fuelStationRepository;
+
         public FuelBillViewModel()
         {
             _isNewFuelBill = true;
@@ -70,6 +74,42 @@ namespace FuelAccount.ViewModel
             this.Kilometrage = bill.Kilometrage;
         }
 
+        private IFuelRepository FuelRepository
+        {
+            get
+            {
+                if (_fuelRepository == null)
+                {
+                    _fuelRepository = new FuelRepository();
+                }
+                return _fuelRepository;
+            }
+        }
+
+        private IFuelBillRepository FuelBillRepository
+        {
+            get
+            {
+                if (_fuelBillRepository == null)
+                {
+                    _fuelBillRepository = new FuelBillRepository();
+                }
+                return _fuelBillRepository;
+            }
+        }
+
+        private IFuelStationRepository FuelStationRepository
+        {
+            get
+            {
+                if (_fuelStationRepository == null)
+                {
+                    _fuelStationRepository = new FuelStationRepository();
+                }
+                return _fuelStationRepository;
+            }
+        }
+
         public override string DisplayName
         {
             get
@@ -92,7 +132,7 @@ namespace FuelAccount.ViewModel
                 if (_fuelsReadOnly == null)
                 {
                     _fuels = new ObservableCollection<FuelViewModel>();
-                    foreach (var fuel in new FuelRepository().GetAll())
+                    foreach (var fuel in this.FuelRepository.GetAll())
                     {
                         _fuels.Add(new FuelViewModel(fuel));
                     }
@@ -109,7 +149,7 @@ namespace FuelAccount.ViewModel
                 if (_fuelStationsReadOnly == null)
                 {
                     _fuelStations = new ObservableCollection<FuelStationViewModel>();
-                    foreach (var fuelStation in new FuelStationRepository().GetAll())
+                    foreach (var fuelStation in this.FuelStationRepository.GetAll())
                     {
                         _fuelStations.Add(new FuelStationViewModel(fuelStation));
                     }
@@ -307,10 +347,10 @@ namespace FuelAccount.ViewModel
                 {
                     bill.BillTime = null;
                 }
-                bill.Fuel = new FuelRepository().Get(this.Fuel.FuelId);
+                bill.Fuel = this.FuelRepository.Get(this.Fuel.FuelId);
                 if (this.FuelStation != null)
                 {
-                    bill.FuelStation = new FuelStationRepository().Get(this.FuelStation.FuelStationId);
+                    bill.FuelStation = this.FuelStationRepository.Get(this.FuelStation.FuelStationId);
                 }
                 else
                 {
@@ -323,12 +363,12 @@ namespace FuelAccount.ViewModel
                 bill.Kilometrage = this.Kilometrage;
                 if (_isNewFuelBill)
                 {
-                    new FuelBillRepository().Add(bill);
+                    this.FuelBillRepository.Add(bill);
                     _isNewFuelBill = false;
                 }
                 else
                 {
-                    new FuelBillRepository().Update(bill);
+                    this.FuelBillRepository.Update(bill);
                 }
 
                 RaisePropertyChanged(() => DisplayName);
